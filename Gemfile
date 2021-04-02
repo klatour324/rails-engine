@@ -43,6 +43,7 @@ group :test do
   gem 'simplecov'
   gem 'orderly'
   gem 'pry'
+  gem 'shoulda-matchers', '~> 4.0'
 end
 
 
