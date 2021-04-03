@@ -19,8 +19,6 @@ RSpec.describe 'Merchants API' do
       expect(attributes).to be_a(Hash)
       expect(attributes).to have_key(:name)
       expect(attributes[:name]).to be_a(String)
-      expect(attributes).to have_key(:id)
-      expect(attributes[:id]).to be_an(Integer)
     end
 
     it 'can send a list of merchants up to 20 per page where first 20 on page 1 match the first 20 merchants in the DB' do
@@ -32,8 +30,8 @@ RSpec.describe 'Merchants API' do
       expect(response).to be_successful
       expect(response.status).to eq(200)
       expect(merchants[:data].count).to eq(20)
-      expect(merchants[:data][1][:attributes][:id]).to eq(merchants[:data][0][:attributes][:id] + 1)
-      expect(merchants[:data][19][:attributes][:id]).to eq(merchants[:data][0][:attributes][:id] + 19)
+      expect(merchants[:data][1][:id].to_i).to eq(merchants[:data][0][:id].to_i + 1)
+      expect(merchants[:data][19][:id].to_i).to eq(merchants[:data][0][:id].to_i + 19)
     end
 
     it 'sends a unique list of up to 20 merchants per page where the page results do not repeat' do
@@ -45,8 +43,8 @@ RSpec.describe 'Merchants API' do
       expect(response).to be_successful
       expect(response.status).to eq(200)
       expect(merchants1[:data].count).to eq(20)
-      expect(merchants1[:data][1][:attributes][:id]).to eq(merchants1[:data][0][:attributes][:id] + 1)
-      expect(merchants1[:data][19][:attributes][:id]).to eq(merchants1[:data][0][:attributes][:id] + 19)
+      expect(merchants1[:data][1][:id].to_i).to eq(merchants1[:data][0][:id].to_i + 1)
+      expect(merchants1[:data][19][:id].to_i).to eq(merchants1[:data][0][:id].to_i + 19)
 
       get '/api/v1/merchants?page=2'
 
@@ -54,8 +52,8 @@ RSpec.describe 'Merchants API' do
       expect(response).to be_successful
       expect(response.status).to eq(200)
       expect(merchants2[:data].count).to eq(20)
-      expect(merchants2[:data][0][:attributes][:id]).to eq(merchants1[:data][0][:attributes][:id] + 20)
-      expect(merchants2[:data][-1][:attributes][:id]).to eq(merchants2[:data][0][:attributes][:id] + 19)
+      expect(merchants2[:data][0][:id].to_i).to eq(merchants1[:data][0][:id].to_i + 20)
+      expect(merchants2[:data][-1][:id].to_i).to eq(merchants2[:data][0][:id].to_i + 19)
     end
   end
 
@@ -71,8 +69,8 @@ RSpec.describe 'Merchants API' do
       expect(response).to be_successful
       expect(response.status).to eq(200)
       expect(merchants[:data].count).to eq(20)
-      expect(merchants[:data][1][:attributes][:id]).to eq(merchants[:data][0][:attributes][:id] + 1)
-      expect(merchants[:data][19][:attributes][:id]).to eq(merchants[:data][0][:attributes][:id] + 19)
+      expect(merchants[:data][1][:id].to_i).to eq(merchants[:data][0][:id].to_i + 1)
+      expect(merchants[:data][19][:id].to_i).to eq(merchants[:data][0][:id].to_i + 19)
     end
   end
 end
