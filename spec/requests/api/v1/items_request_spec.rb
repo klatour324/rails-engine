@@ -77,4 +77,125 @@ RSpec.describe 'Items API' do
       end
     end
   end
+
+  it 'can create a new item' do
+    merchant = create(:merchant)
+
+    item_params = ({
+                    name: 'GE Light Bulb',
+                    description: 'Brightest light on the planet',
+                    unit_price: 10.99,
+                    merchant_id: merchant.id
+                  })
+    headers = {"CONTENT_TYPE" => "application/json"}
+
+    post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+    created_item = Item.last
+    returned_json = JSON.parse(response.body, symbolize_names: true)[:data]
+
+  expect(response).to be_successful
+  expect(response.status).to eq(201)
+  expect(created_item.name).to eq(item_params[:name])
+  expect(created_item.description).to eq(item_params[:description])
+  expect(created_item.unit_price).to eq(item_params[:unit_price])
+  expect(created_item.merchant_id).to eq(item_params[:merchant_id])
+  attributes = returned_json[:attributes]
+  expect(attributes).to be_a(Hash)
+  expect(attributes).to have_key(:name)
+  expect(attributes[:name]).to be_a(String)
+  expect(attributes).to have_key(:description)
+  expect(attributes[:description]).to be_a(String)
+  end
+
+  describe 'sad path' do
+    it 'does not create a record and returns an error if any attribute is missing' do
+      merchant = create(:merchant)
+
+      item_params = ({
+                      description: 'Brightest light on the planet',
+                      unit_price: 10.99,
+                      merchant_id: merchant.id
+                    })
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+      created_item = Item.last
+      returned_json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(406)
+      expect(returned_json[:message]).to eq('Your query could not be completed')
+      expect(returned_json[:errors].first).to eq("Name can't be blank")
+    end
+
+    it 'ignores any attributes that are not allowed' do
+      merchant = create(:merchant)
+
+      item_params = ({
+                      name: 'GE Light Bulb',
+                      description: 'Brightest light on the planet',
+                      unit_price: 10.99,
+                      merchant_id: merchant.id,
+                      fav_food: 'Pizza'
+                    })
+      headers = {"CONTENT_TYPE" => "application/json"}
+
+      post "/api/v1/items", headers: headers, params: JSON.generate(item: item_params)
+      created_item = Item.last
+      returned_json = JSON.parse(response.body, symbolize_names: true)[:data]
+
+      expect(created_item.name)
+      expect(response.status).to eq(406)
+      expect(returned_json[:message]).to eq("Your query could not be completed")
+      expect(returned_json[:errors]).to eq("Name can't be blank")
+    end
+  end
+
+  it 'can update an existing item' do
+    merchant = create(:merchant)
+    id = create(:item).id
+    previous_name = Item.last.name
+    item_params = { name: 'Lisa Frank Notebooks' }
+    headers = {"CONTENT_TYPE" => "application/json" }
+
+    patch "/api/v1/items/#{id}", headers: headers, params: JSON.generate({item: item_params})
+    item = Item.find_by(id: id)
+
+    expect(response).to be_successful
+    expect(item.name).to_not eq(previous_name)
+    expect(item.name).to eq("Lisa Frank Notebooks")
+  end
+
+  it 'cannot update an item whose id does not exist' do
+    merchant = create(:merchant)
+    item = create(:item)
+    previous_name = Item.last.name
+    item_params = { name: 'Lisa Frank Notebooks' }
+    headers = {"CONTENT_TYPE" => "application/json" }
+
+    patch "/api/v1/items/294856", headers: headers, params: JSON.generate({item: item_params})
+    returned_json = JSON.parse(response.body, symbolize_names: true)[:data]
+    item.reload
+
+    expect(response).to_not be_successful
+    expect(response.status).to eq(404)
+    expect(item.name).to eq(previous_name)
+  end
+
+  it 'cannot update an item that already exists with a bad merchant id' do
+    merchant = create(:merchant)
+    item = create(:item)
+    item_params = { name: 'Lisa Frank Notebooks',
+                    description: 'Colorful Furry Friend Notebooks',
+                    unit_price: 9.99,
+                    merchant_id: 93827472}
+    headers = {"CONTENT_TYPE" => "application/json" }
+
+    patch "/api/v1/items/#{item.id}", headers: headers, params: JSON.generate({item: item_params})
+    returned_json = JSON.parse(response.body, symbolize_names: true)[:data]
+    item.reload
+
+    expect(response).to_not be_successful
+    expect(response.status).to eq(400)
+  end
 end
