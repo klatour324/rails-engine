@@ -144,10 +144,13 @@ RSpec.describe 'Items API' do
       created_item = Item.last
       returned_json = JSON.parse(response.body, symbolize_names: true)[:data]
 
-      expect(created_item.name)
-      expect(response.status).to eq(406)
-      expect(returned_json[:message]).to eq("Your query could not be completed")
-      expect(returned_json[:errors]).to eq("Name can't be blank")
+      expect(created_item.name).to eq(item_params[:name])
+      expect(created_item.description).to eq(item_params[:description])
+      expect(created_item.unit_price).to eq(item_params[:unit_price])
+      expect(created_item.merchant_id).to eq(item_params[:merchant_id])
+      expect((returned_json).has_key?(:fav_food)).to eq(false)
+      expect(response).to be_successful
+      expect(response.status).to eq(201)
     end
   end
 
@@ -197,5 +200,18 @@ RSpec.describe 'Items API' do
 
     expect(response).to_not be_successful
     expect(response.status).to eq(400)
+  end
+
+  it 'can destroy an item' do
+    merchant = create(:merchant)
+    item = create(:item)
+
+    expect(Item.count).to eq(1)
+
+    delete "/api/v1/items/#{item.id}"
+
+    expect(response).to be_successful
+    expect(Item.count).to eq(0)
+    expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
   end
 end
