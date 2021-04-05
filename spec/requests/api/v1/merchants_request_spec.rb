@@ -98,4 +98,15 @@ RSpec.describe 'Merchants API' do
       expect(returned_json[:data][0][:attributes][:merchant_id]).to be_an(Integer)
     end
   end
+
+  describe 'sad path' do
+    it 'gives an error if the merchant id does not exist and will not return all items' do
+      get "/api/v1/merchants/4444444444444/items"
+
+      returned_json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response.status).to eq(404)
+      expect(response).to be_not_found
+    end
+  end
 end
