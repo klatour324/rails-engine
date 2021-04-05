@@ -214,4 +214,32 @@ RSpec.describe 'Items API' do
     expect(Item.count).to eq(0)
     expect{Item.find(item.id)}.to raise_error(ActiveRecord::RecordNotFound)
   end
+
+  it 'will destroy both the item and invoice if a valid item id and is the only item on invoice' do
+    item1 = create(:item)
+    item2 = create(:item)
+    invoice1 = create(:invoice)
+    invoice2 = create(:invoice)
+    invoice1.items << item1
+    invoice2.items << [item1, item2]
+
+    expect(Item.count).to eq(2)
+
+    delete "/api/v1/items/#{item1.id}"
+
+    expect(response).to be_successful
+    expect(Item.count).to eq(1)
+    expect{Item.find(item1.id)}.to raise_error(ActiveRecord::RecordNotFound)
+    expect{Invoice.find(invoice1.id)}.to raise_error(ActiveRecord::RecordNotFound)
+    expect(Invoice.find(invoice2.id)).to eq(invoice2)
+  end
+
+  describe 'sad path' do
+    it 'does not destroy an item if the id does not exist' do
+      delete "/api/v1/items/44444444"
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(404)
+    end
+  end
 end
