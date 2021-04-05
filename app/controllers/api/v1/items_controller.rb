@@ -28,7 +28,15 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def destroy
-    render json: Item.delete(params[:id])
+    item = Item.find(params[:id])
+    invoice_ids = item.invoice_items.select('invoice_items.invoice_id')
+    invoices = InvoiceItem.where('invoice_id in (?)', invoice_ids).group(:invoice_id).count
+    invoices.each do |invoice_id, item_count|
+      if item_count == 1
+        Invoice.destroy(invoice_id)
+      end
+    end
+    render json: Item.destroy(params[:id])
   end
 
   private
