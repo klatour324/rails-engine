@@ -242,4 +242,33 @@ RSpec.describe 'Items API' do
       expect(response.status).to eq(404)
     end
   end
+
+  describe 'happy path' do
+    it 'can return a merchant when given a valid item id' do
+      merchant = create(:merchant)
+      item = create(:item)
+      merchant.items << item
+      get "/api/v1/items/#{item.id}/merchant"
+
+      returned_json = JSON.parse(response.body, symbolize_names: true)
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+      expect(returned_json.count).to eq(1)
+      expect(returned_json[:data]).to have_key(:id)
+      expect(returned_json[:data][:attributes]).to be_a(Hash)
+      expect(returned_json[:data][:attributes]).to have_key(:name)
+      expect(returned_json[:data][:attributes][:name]).to be_a(String)
+    end
+  end
+
+  describe 'sad path' do
+    it 'gives an error if the items id does not exist and will not return the merchant' do
+      get "/api/v1/items/4444444444/merchant"
+
+      returned_json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response.status).to eq(404)
+      expect(response).to be_not_found
+    end
+  end
 end
