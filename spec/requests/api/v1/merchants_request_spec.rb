@@ -73,4 +73,29 @@ RSpec.describe 'Merchants API' do
       expect(merchants[:data][19][:id].to_i).to eq(merchants[:data][0][:id].to_i + 19)
     end
   end
+
+  describe 'happy path' do
+    it 'can return all of the items requested when a merchant id is given' do
+      merchant = create(:merchant)
+      item1 = create(:item)
+      item2 = create(:item)
+      merchant.items << [item1, item2]
+
+      get "/api/v1/merchants/#{merchant.id}/items"
+
+      returned_json = JSON.parse(response.body, symbolize_names: true)
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+      expect(returned_json[:data].count).to eq(2)
+
+      expect(returned_json[:data][0][:id]).to eq(item1.id.to_s)
+      expect(returned_json[:data][0][:attributes]).to be_a(Hash)
+      expect(returned_json[:data][0][:attributes]).to have_key(:name)
+      expect(returned_json[:data][0][:attributes][:name]).to be_a(String)
+      expect(returned_json[:data][0][:attributes][:description]).to be_a(String)
+      expect(returned_json[:data][0][:attributes][:unit_price]).to be_a(Float)
+      expect(returned_json[:data][0][:attributes]).to have_key(:merchant_id)
+      expect(returned_json[:data][0][:attributes][:merchant_id]).to be_an(Integer)
+    end
+  end
 end
