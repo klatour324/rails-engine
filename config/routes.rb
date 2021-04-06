@@ -6,6 +6,8 @@ Rails.application.routes.draw do
         get '/items', to: "merchants/merchant_items#index"
       end
 
+      get '/items/find', to: "items/search#show"
+
       resources :items do
         # resources :merchant, only: :show, controller: :item_merchant
         get '/merchant', to: "items/item_merchant#show"
