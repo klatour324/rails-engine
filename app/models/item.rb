@@ -6,4 +6,11 @@ class Item < ApplicationRecord
   has_many :transactions, through: :invoices
 
   validates_presence_of [:name, :description, :unit_price, :merchant_id], on: :create
+
+  def self.find_item_by_name_fragment(searched_term)
+    where("lower(name) like ?", '%' + searched_term + '%')
+    .order(:name)
+    .limit(1)
+    .first
+  end
 end
