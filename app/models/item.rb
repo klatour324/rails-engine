@@ -13,11 +13,20 @@ class Item < ApplicationRecord
     .limit(1)
     .first
   end
-  
+
   # def self.find_item_by_name_fragment(searched_term)
   #   where("lower(name) LIKE or lower(description) LIKE?", "%#{searched_term}%", "%#{searched_term}%")
   #   .order(:name)
   #   .limit(1)
   #   .first
   # end
+
+  def self.items_most_revenue(quantity)
+    select('items.*, sum(invoice_items.quantity * invoice_items.unit_price) as revenue')
+    .joins(:transactions)
+    .where(transactions: {result: :success})
+    .group(:id)
+    .order(revenue: :desc)
+    .limit(quantity)
+  end
 end

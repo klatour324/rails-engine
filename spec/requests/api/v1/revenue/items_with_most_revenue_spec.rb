@@ -18,16 +18,17 @@ RSpec.describe 'Items with Most Revenue', type: :request do
         expect(returned_json[:data].count).to eq(10)
         expect(returned_json[:data].first).to have_key(:id)
         expect(returned_json[:data].first[:id]).to be_a(String)
-        expect(returned_json[:data].first[:id]).to eq(@merchant9.id.to_s)
+        expect(returned_json[:data].first[:id]).to eq(@item11.id.to_s)
         expect(returned_json[:data].first[:attributes]).to be_a(Hash)
         expect(returned_json[:data].first[:attributes]).to have_key(:revenue)
         expect(returned_json[:data].first[:attributes][:revenue]).to be_a(Float)
         expect(returned_json[:data].first[:attributes][:revenue]).to eq(11400.0)
-        expect(returned_json[:data].second[:attributes][:revenue]).to eq(10879.35)
+        expect(returned_json[:data].second[:attributes][:revenue]).to eq(8550.0)
       end
 
       it 'sends top item by revenue with a quantity of 1' do
         quantity = 1
+
         get "/api/v1/revenue/items?quantity=#{quantity}"
 
         returned_json = JSON.parse(response.body, symbolize_names: true)
@@ -37,7 +38,7 @@ RSpec.describe 'Items with Most Revenue', type: :request do
         expect(returned_json[:data].count).to eq(1)
         expect(returned_json[:data].first).to have_key(:id)
         expect(returned_json[:data].first[:id]).to be_a(String)
-        expect(returned_json[:data].first[:id]).to eq(@merchant9.id.to_s)
+        expect(returned_json[:data].first[:id]).to eq(@item11.id.to_s)
         expect(returned_json[:data].first[:attributes]).to be_a(Hash)
         expect(returned_json[:data].first[:attributes]).to have_key(:revenue)
         expect(returned_json[:data].first[:attributes][:revenue]).to be_a(Float)
@@ -53,15 +54,15 @@ RSpec.describe 'Items with Most Revenue', type: :request do
 
         expect(response).to be_successful
         expect(response.status).to eq(200)
-        expect(json[:data].count).to eq(7)
+        expect(json[:data].count).to eq(12)
         expect(json[:data].first).to have_key(:id)
         expect(json[:data].first[:id]).to be_a(String)
-        expect(json[:data].first[:id]).to eq(@merchant9.id.to_s)
+        expect(json[:data].first[:id]).to eq(@item11.id.to_s)
         expect(json[:data].first[:attributes]).to be_a(Hash)
         expect(json[:data].first[:attributes]).to have_key(:revenue)
         expect(json[:data].first[:attributes][:revenue]).to be_a(Float)
         expect(json[:data].first[:attributes][:revenue]).to eq(11400.0)
-        expect(json[:data].last[:attributes][:revenue]).to eq(1.0)
+        expect(json[:data].last[:attributes][:revenue]).to eq(0.0)
       end
     end
 

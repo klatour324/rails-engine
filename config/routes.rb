@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       get 'revenue/merchants/:id', to: "merchants#total_revenue"
       get 'revenue/unshipped', to: "invoices#potential_revenue"
       get 'revenue/merchants', to: "merchants#highest_revenue"
+      get 'revenue/items', to: "items#top_revenue"
 
       resources :merchants, only: [:index, :show] do
         get '/items', to: "merchants/merchant_items#index"
