@@ -28,7 +28,7 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   def destroy
-    item = Item.find(params[:id])
+    item_id = Item.find(params[:id])
     invoice_ids = item.invoice_items.select('invoice_items.invoice_id')
     invoices = InvoiceItem.where('invoice_id in (?)', invoice_ids).group(:invoice_id).count
     invoices.each do |invoice_id, item_count|
@@ -37,6 +37,19 @@ class Api::V1::ItemsController < ApplicationController
       end
     end
     render json: Item.destroy(params[:id])
+    # Invoice.destroy_invoice_with_one_item(item_id)
+  end
+
+  def top_revenue
+    quantity = params[:quantity].nil? ? 10 : params[:quantity].to_i
+
+    if quantity <= 0
+      error = "invalid quantity parameter, it must be an integer greater than 0"
+      render json: { error: error}, status: :bad_request
+    else
+      @item = Item.items_most_revenue(quantity)
+      render json: ItemRevenueSerializer.new(@item)
+    end
   end
 
   private
