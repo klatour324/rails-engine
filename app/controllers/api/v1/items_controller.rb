@@ -38,7 +38,7 @@ class Api::V1::ItemsController < ApplicationController
   def top_revenue
     quantity = params[:quantity].nil? ? 10 : params[:quantity].to_i
 
-    if quantity <= 0
+    if quantity < 0
       error = "invalid quantity parameter, it must be an integer greater than 0"
       render json: { error: error}, status: :bad_request
     else
