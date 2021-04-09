@@ -140,5 +140,11 @@ RSpec.describe 'Find One Item' do
       expect(response).to_not be_successful
       expect(response.status).to eq(400)
     end
+
+    it "gives a 400 error response if nothing is passed in" do
+      get "/api/v1/items/find?444444444"
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+    end
   end
 end

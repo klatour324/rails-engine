@@ -85,7 +85,7 @@ RSpec.describe 'Items with Most Revenue', type: :request do
         expect(response.status).to eq(400)
       end
 
-      it "sends an error response if the quantity is negative(less than 0)" do
+      it "sends an error response if the quantity is negative" do
         quantity = -1
 
         get "/api/v1/revenue/merchants?quantity=#{quantity}"
