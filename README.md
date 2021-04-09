@@ -1,7 +1,7 @@
 # Rails Engine
 
 ## About this Project
-Rails Engine is a Rails E-Commerce Application that focuses on a service-oriented structure, where data is exposed to the front end through an API. The purpose of this project is to learn how to test and expose an API, use serializers to format JSON responses and further the understanding of advance ActiveRecord queries in order to analyze information stored in the SQL database.  
+Rails Engine is a Rails E-Commerce Application that focuses on a service-oriented structure, where data is exposed to the front end through an API. The purpose of this project is to learn how to test and expose an API, use serializers to format JSON responses and further the understanding of advance ActiveRecord queries in order to analyze information stored in the database.  
 
 ## Table of Contents
 
