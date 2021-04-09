@@ -25,6 +25,18 @@ RSpec.describe 'Items API' do
       expect(attributes[:unit_price]).to be_a(Float)
     end
 
+    it 'can send a list of up to 20 items when there are less than that in the data base' do
+      create_list(:item, 10)
+
+      get '/api/v1/items?page=1'
+
+      items = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response).to be_successful
+      expect(response.status).to eq(200)
+      expect(items[:data].count).to eq(10)
+    end
+
     it 'can send a list of items up to 20 per page where first 20 on page 1 match the first 20 items in the DB' do
       create_list(:item, 21)
 
