@@ -30,4 +30,18 @@ class Item < ApplicationRecord
     .order(revenue: :desc)
     .limit(quantity)
   end
+
+  def self.find_by_max_price(max_price)
+    where('unit_price <= ?', max_price )
+    .order(:name)
+    .limit(1)
+    .first
+  end
+
+  def self.find_by_min_price(min_price)
+    where('unit_price >= ?', min_price)
+    .order(:name)
+    .limit(1)
+    .first
+  end
 end
