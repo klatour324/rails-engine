@@ -38,5 +38,38 @@ RSpec.describe Item, type: :model do
         expect(Item.items_most_revenue(3)).to eq([item3, item2, item1])
       end
     end
+
+    describe '::find_by_min_and_max_price' do
+      it 'finds the item between the min and max price, sorted alphabetically' do
+        merchant = create(:merchant)
+        item1 = create(:item, name: 'Cool Item', merchant: merchant, unit_price: 100.00)
+        item2 = create(:item, name: 'Best Item', merchant: merchant, unit_price: 150.00)
+        item3 = create(:item, name: 'Only Item', merchant: merchant, unit_price: 300.00)
+
+        expect(Item.find_by_min_and_max_price(100.00, 300.00)).to eq(item2)
+      end
+    end
+
+    describe '::find_by_max_price' do
+      it 'finds the item by its max price' do
+        merchant = create(:merchant)
+        item1 = create(:item, name: 'Cool Item', merchant: merchant, unit_price: 100.00)
+        item2 = create(:item, name: 'Best Item', merchant: merchant, unit_price: 250.00)
+        item3 = create(:item, name: 'A Really Cool Item', merchant: merchant, unit_price: 150.00)
+
+        expect(Item.find_by_max_price(200.00)).to eq(item3)
+      end
+    end
+
+    describe '::find_by_min_price' do
+      it 'finds the item by its min price' do
+        merchant = create(:merchant)
+        item1 = create(:item, name: 'Cool Item', merchant: merchant, unit_price: 200.00)
+        item2 = create(:item, name: 'Best Item', merchant: merchant, unit_price: 100.00)
+        item3 = create(:item, name: 'Only Item', merchant: merchant, unit_price: 300.00)
+
+        expect(Item.find_by_min_price(100.00)).to eq(item2)
+      end
+    end
   end
 end
