@@ -131,8 +131,6 @@ Transactions also exhibits a one-to-many relationship where an invoice can have 
 - FactoryBot
 - Faker
 
-## Contributing
-
 ## Versioning
 - Ruby 2.5.3
 - Rails 5.2.5
@@ -141,7 +139,3 @@ Transactions also exhibits a one-to-many relationship where an invoice can have 
 - **Katy La Tour**
      | [GitHub](https://github.com/klatour324) |
     [LinkedIn](https://www.linkedin.com/in/klatour324/)
-
-## Licensing
-
-## Acknowledgements
